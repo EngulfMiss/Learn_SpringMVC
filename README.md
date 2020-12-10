@@ -5,6 +5,7 @@ study SpringMVC
 archetypeCatalog - internal
 
 ## springMVC运行所需的名称空间(xml)配置
+```
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -18,4 +19,5 @@ archetypeCatalog - internal
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 </beans>
+```
 
