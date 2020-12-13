@@ -21,6 +21,23 @@ archetypeCatalog - internal
 </beans>
 ```
 
+## 修改maaven镜像下载地址
+在maven的conf->setting.xml文件中添加
+```
+<mirror>
+
+ <id>alimaven</id>
+
+ <name>aliyun maven</name>
+
+ <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+
+ <mirrorOf>central</mirrorOf>
+
+</mirror>
+```
+
+
 ## pom.xml配置
 ```
 <?xml version="1.0" encoding="UTF-8"?>
