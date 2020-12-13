@@ -26,13 +26,10 @@ archetypeCatalog - internal
 ```
 <mirror>
 
- <id>alimaven</id>
-
- <name>aliyun maven</name>
-
- <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-
- <mirrorOf>central</mirrorOf>
+ <id>aliyunmaven</id>
+  <mirrorOf>*</mirrorOf>
+  <name>阿里云公共仓库</name>
+  <url>https://maven.aliyun.com/repository/public</url>
 
 </mirror>
 ```
