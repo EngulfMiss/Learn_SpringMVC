@@ -57,7 +57,7 @@ archetypeCatalog - internal
 
 
 ## 修改maaven镜像下载地址
-在maven的conf->setting.xml文件中添加
+在maven的conf->setting.xml文件<mirrors>标签中添加
 ```
 <mirror>
 
