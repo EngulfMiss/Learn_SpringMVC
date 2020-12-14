@@ -21,6 +21,41 @@ archetypeCatalog - internal
 </beans>
 ```
 
+## 跨服务器上传出现403/405的解决
+###跨服务器上传出现的问题概述：PUT http://localhost:9090/spring_day2_file_server_war_exploded/upload/xxx.png returned a response status of 405 Method Not Allowed
+###解决方法：
+在你的Tomact服务器安装目录下的conf/web.xml配置文件中加上：
+```
+<init-param>
+     <param-name>readonly</param-name>
+     <param-value>false</param-value>
+</init-param>
+```
+
+配置后：
+```
+<servlet>
+ <servlet-name>default</servlet-name>
+ <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+ <init-param>
+     <param-name>debug</param-name>
+     <param-value>0</param-value>
+ </init-param>
+ <init-param>
+     <param-name>listings</param-name>
+     <param-value>false</param-value>
+ </init-param>
+ <init-param>
+     <param-name>readonly</param-name>
+     <param-value>false</param-value>
+ </init-param>
+ <load-on-startup>1</load-on-startup>
+</servlet>
+```
+
+
+
+
 ## 修改maaven镜像下载地址
 在maven的conf->setting.xml文件中添加
 ```
