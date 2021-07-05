@@ -70,3 +70,6 @@ public class HelloController implements Controller {
 ```
 6.在springMVC配置文件中配置处理器bean
 
+### 在SpringMVC中，/ 和 /* 的区别
+- /：只匹配所有的请求，不会去匹配jsp页面
+- /*：匹配所有的请求，包括jsp页面      可能会出现 xxx.jsp.jsp.jsp
