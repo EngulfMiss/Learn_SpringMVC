@@ -87,7 +87,8 @@ ___
 </beans>
 ```
 ___
-5.编写处理器(Controller)
+5.编写处理器(Controller)  
+
 注解方式：
 ```java
 @Controller
