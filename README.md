@@ -5,7 +5,7 @@ study SpringMVC
 archetypeCatalog - internal
 
 ## springMVC运行所需的名称空间(xml)配置
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -25,7 +25,7 @@ archetypeCatalog - internal
 ###跨服务器上传出现的问题概述：PUT http://localhost:9090/spring_day2_file_server_war_exploded/upload/xxx.png returned a response status of 405 Method Not Allowed
 ###解决方法：
 在你的Tomact服务器安装目录下的conf/web.xml配置文件中加上：
-```
+```xml
 <init-param>
      <param-name>readonly</param-name>
      <param-value>false</param-value>
@@ -33,7 +33,7 @@ archetypeCatalog - internal
 ```
 
 配置后：
-```
+```xml
 <servlet>
  <servlet-name>default</servlet-name>
  <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
@@ -104,7 +104,7 @@ archetypeCatalog - internal
 
 ___
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
