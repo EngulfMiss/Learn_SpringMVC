@@ -1,5 +1,5 @@
 # 编写第一个SpringMVC程序
-** 步骤 **
+**步骤**  
 1.新建项目，添加web的支持  
 2.导入SpringMVC的相关依赖
 3.配置web.xml，注册DispatcherServlet
@@ -129,3 +129,124 @@ public class HelloController implements Controller {
 ### 在SpringMVC中，/ 和 /* 的区别
 - /：只匹配所有的请求，不会去匹配jsp页面
 - /*：匹配所有的请求，包括jsp页面      可能会出现 xxx.jsp.jsp.jsp
+
+## 跳转方式
+- servlet API
+转发：req.getRequestDispatcher("/WEB-INF/jsp/test.jsp").forward(req,resp);  
+重定向：resp.sendRedirect("/test.jsp");
+
+- SpringMVC
+通过SpringMVC来实现转发和重定向，**无视图解析器**  
+```java
+//SpringMVC的转发
+    @GetMapping("/test2")
+    public String test2(Model model){
+        model.addAttribute("msg","SpringMVC转发");
+        return "/WEB-INF/jsp/gnar.jsp";
+    }
+
+    @GetMapping("/test3")
+    public String test3(Model model){
+        model.addAttribute("msg","SpringMVC转发");
+        return "forward:/WEB-INF/jsp/gnar.jsp";
+    }
+
+//重定向
+    @GetMapping("/test4")
+    public String test4(Model model){
+        model.addAttribute("msg","SpringMVC转发");
+        return "redirect:/test.jsp";
+    }
+```
+
+通过SpringMVC来实现转发和重定向，**有视图解析器**  
+```java
+//转发
+@GetMapping("/test")
+public String test(){
+    return "gnar";
+}
+
+//重定向
+    @GetMapping("/test4")
+    public String test4(Model model){
+        model.addAttribute("msg","SpringMVC转发");
+        return "redirect:/test.jsp";
+    }
+```
+
+## 接收请求参数与数据回显
+- @RequestParam:请求地址中的参数绑定  
+请求地址：http://localhost:8080/info/t1?username=kindred
+```java
+    public String test(@RequestParam("username") String name, Model model){
+        return "gnar";
+    }
+```
+**传递的如果是对象，如果请求参数与实体类的属性名相同，则方法的参数可以直接使用对象**  
+____
+数据回显
+- ModelAndView：可以在存储数据的同时，进行设置返回的逻辑视图，进行控制显示层的跳转
+```java
+public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception      {
+    //ModelAndView 模型和视图对象
+    ModelAndView mv = new ModelAndView();
+
+    //封装对象，放在ModelAndView中
+    mv.addObject("msg","HelloSpringMVC");
+    mv.setViewName("hello");   //会查询到视图解析器的配置  /WEB-INF/jsp/hello.jsp
+    System.out.println(mv.getViewName());
+    return mv;
+}
+```
+- Model：只有寥寥几个方法，只适用于存储数据，简化了新手对于Model对象的操作和理解
+```java
+@GetMapping("/t1")
+public String test(@RequestParam("username") String name, Model model){
+    //1.接收前端参数
+    System.out.println("接收到前端的参数为：" + name);
+    //2.将返回的结果传递给前端
+    model.addAttribute("msg",name);
+    //3.跳转视图
+    return "gnar";
+}
+```
+- ModelMap：继承了LinkedHashMap，除了实现了自身的一些方法，同样的继承LindedHashMap的方法和特性
+
+## 乱码问题(一定要注意过滤的路径是 /*)
+使用过滤器解决乱码问题（手动书写filter）
+步骤：  
+1.写一个类实现Filter接口(javax.servlet.*)
+2.重写doFilter方法  
+```java
+public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    servletRequest.setCharacterEncoding("utf-8");
+    servletResponse.setCharacterEncoding("utf-8");
+    filterChain.doFilter(servletRequest,servletResponse);
+}
+```
+3.在web.xml中注册filter
+```xml
+<filter>
+    <filter-name>encoding</filter-name>
+    <filter-class>com.engulf.filter.EncodingFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>encoding</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+**使用SpringMVC提供的过滤器**
+在web.xml中配置 springmvc提供的过滤器
+```xml
+<!-- 使用SpringMVC提供的乱码过滤器 -->
+<filter>
+    <filter-name>encoding</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>encoding</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
