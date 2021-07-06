@@ -251,7 +251,7 @@ public void doFilter(ServletRequest servletRequest, ServletResponse servletRespo
 </filter-mapping>
 ```
 
-## JSON
+# JSON
 在JavaScript语言中，一切都是对象。因此，任何JavaScript支持的类型都可以通过JSON来表示，例如字符串，数字，对象，数组等。  
 语法要求：  
 - 对象表示为键值对，数组由逗号分隔
@@ -291,4 +291,104 @@ JSON的一些方法：
 
 </body>
 </html>
+```
+
+## Controller返回JSON数据
+##json解析工具-Jackson  
+引入Jackson的jar包
+```xml
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>
+```
+
+**JSON乱码问题代码优化**
+在spingmvc配置文件中的 <mvc:annotation-driven>标签中配置
+```xml
+<!-- JSON乱码问题配置 -->
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <constructor-arg value="UTF-8"></constructor-arg>
+            </bean>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper">
+                    <bean class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+                        <property name="failOnEmptyBeans" value="false"></property>
+                    </bean>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+```
+
+使用
+```java
+@Controller
+//@RestController   后面的方法都只返回字符串不走视图解析器
+public class MyController {
+    @ResponseBody  //有ResponseBody注解就不会走视图解析器，会直接返回一个字符串
+    @RequestMapping(value = "/j3")
+    public String json3() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Date date = new Date();
+
+        //时间格式化方式二:(ObjectMapper)
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        mapper.setDateFormat(sdf);
+        return mapper.writeValueAsString(sdf.format(date));
+        
+        // ObjectMapper,时间解析后的默认格式是Timestamp时间戳
+        // 时间格式化方式一:(SimpleDateFormat)
+        /*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return mapper.writeValueAsString(sdf.format(date));*/
+    }
+
+    @ResponseBody  //有ResponseBody注解就不会走视图解析器，会直接返回一个字符串
+    @RequestMapping(value = "/j2")
+    public String json2() throws JsonProcessingException {
+
+        //jackson   ObjectMapper
+        ObjectMapper mapper = new ObjectMapper();
+
+        List<Champion> champions = new ArrayList<Champion>();
+
+        Champion champion = new Champion(1,"千珏",1500);
+        Champion champion2 = new Champion(2,"纳尔",10);
+        Champion champion3 = new Champion(3,"妮蔻",15);
+        Champion champion4 = new Champion(1,"莉莉娅",150);
+
+        champions.add(champion);
+        champions.add(champion2);
+        champions.add(champion3);
+        champions.add(champion4);
+
+        String s = mapper.writeValueAsString(champions);
+
+        return s;
+    }
+
+    @ResponseBody
+    @RequestMapping("/j1"/*,produces = "application/json;charset=utf-8"*/)
+    public String json1() throws JsonProcessingException {
+
+        //jackson   ObjectMapper
+        ObjectMapper mapper = new ObjectMapper();
+
+        List<Champion> champions = new ArrayList<Champion>();
+
+        Champion champion = new Champion(1,"千珏",1500);
+
+
+        String s = mapper.writeValueAsString(champion);
+        //toString返回结果 ：
+        // Champion(id=1, name=kindred, age=1500)
+        //jackson的ObjectMapper的writeValueAsString方法的结果 ：
+        // {"id":1,"name":"kindred","age":1500}
+        return s;
+    }
+}
 ```
