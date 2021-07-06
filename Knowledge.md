@@ -294,7 +294,7 @@ JSON的一些方法：
 ```
 
 ## Controller返回JSON数据
-##json解析工具-Jackson  
+**json解析工具-Jackson**  
 引入Jackson的jar包
 ```xml
 <dependency>
@@ -390,5 +390,43 @@ public class MyController {
         // {"id":1,"name":"kindred","age":1500}
         return s;
     }
+}
+```
+
+**json解析工具-Fastjson**
+导入依赖
+```xml
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>fastjson</artifactId>
+    <version>1.2.76</version>
+</dependency>
+```
+使用
+```java
+/*
+    * JSON字符串 转 Java对象 --> JSON.parseObject(str,Object.class)
+    * java对象 转 JSON对象 --> (JSONObject)JSON.toJSON(object)
+    * java对象 转 JSON字符串 --> JSON.toJSONString(object)
+    * JSON对象 转 java对象 --> JSON.toJavaObject(jsonObject,Object.class)
+    *
+    * */
+@ResponseBody
+@RequestMapping("/j5")
+public String json5(){
+    List<Champion> champions = new ArrayList<Champion>();
+
+    Champion champion = new Champion(1,"千珏",1500);
+    Champion champion2 = new Champion(2,"纳尔",10);
+    Champion champion3 = new Champion(3,"妮蔻",15);
+    Champion champion4 = new Champion(1,"莉莉娅",150);
+
+    champions.add(champion);
+    champions.add(champion2);
+    champions.add(champion3);
+    champions.add(champion4);
+
+    String s = JSON.toJSONString(champions);
+    return s;
 }
 ```
