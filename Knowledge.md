@@ -1,7 +1,7 @@
 # 编写第一个SpringMVC程序
 **步骤**  
 1.新建项目，添加web的支持  
-2.导入SpringMVC的相关依赖
+2.导入SpringMVC的相关依赖  
 3.配置web.xml，注册DispatcherServlet
 ```xml
 <!-- 注册DispatcherServlet -->
@@ -216,7 +216,7 @@ public String test(@RequestParam("username") String name, Model model){
 ## 乱码问题(一定要注意过滤的路径是 /*)
 使用过滤器解决乱码问题（手动书写filter）
 步骤：  
-1.写一个类实现Filter接口(javax.servlet.*)
+1.写一个类实现Filter接口(javax.servlet.*)  
 2.重写doFilter方法  
 ```java
 public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
