@@ -250,3 +250,45 @@ public void doFilter(ServletRequest servletRequest, ServletResponse servletRespo
     <url-pattern>/*</url-pattern>
 </filter-mapping>
 ```
+
+## JSON
+在JavaScript语言中，一切都是对象。因此，任何JavaScript支持的类型都可以通过JSON来表示，例如字符串，数字，对象，数组等。  
+语法要求：  
+- 对象表示为键值对，数组由逗号分隔
+- 花括号保存对象
+- 方括号保存数组
+
+JSON的一些方法：
+- 将js对象转为JSON字符串：  
+  JSON.stringify(user);
+- 将JSON字符串转为js对象：  
+  JSON.parse(json);
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+        //编写一个JavaScript对象
+        var user = {
+            name:"kindred",
+            age:3,
+            sex:"女"
+        }
+
+        //将js对象转为JSON字符串
+        var json = JSON.stringify(user);
+        console.log(json);
+
+        console.log("================");
+        //将JSON字符串转为js对象
+        var user = JSON.parse(json);
+        console.log(user);
+    </script>
+</head>
+<body>
+
+</body>
+</html>
+```
