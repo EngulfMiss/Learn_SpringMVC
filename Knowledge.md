@@ -470,3 +470,110 @@ public class MyInterceptor implements HandlerInterceptor {
         </mvc:interceptor>
     </mvc:interceptors>
 ```
+
+## 文件上传
+**导入相关依赖**
+```xml
+<dependencies>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+    </dependencies>
+```
+**文件上传配置**
+```xml
+<!-- 文件上传配置 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 请求的编码格式,必须和jsp的pageEncoding属性一致,以便正确读取表单的内容,默认为ISO-8859-1 -->
+        <property name="defaultEncoding" value="utf-8"></property>
+        <!-- 上传文件大小的限制,单位为字节(10485760 = 10M) -->
+        <property name="maxUploadSize" value="10485760"></property>
+        <property name="maxInMemorySize" value="40960"></property>
+    </bean>
+```
+
+**前端html**
+```html
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+  <head>
+    <title>$Title$</title>
+  </head>
+  <body>
+    <form action="${pageContext.request.contextPath}/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="file">
+      <input type="submit" value="uploadFile">
+    </form>
+  </body>
+</html>
+```
+
+**controller控制文件上传代码**
+```java
+@RestController
+public class TestController {
+
+    //上传文件方法一:io流
+    @RequestMapping("/upload")
+    public String upload(@RequestParam("file") CommonsMultipartFile file, HttpServletRequest request) throws IOException {
+        //获取文件名 : file.getOriginalFilename()
+        String uploadFileName = file.getOriginalFilename();
+
+        //如果文件名为空,直接回到首页
+        if("".equals(uploadFileName)){
+            return "redirect:/index.jsp";
+        }
+        System.out.println("上传文件名 : " + uploadFileName);
+
+        //上传路径保存设置
+        String path = request.getServletContext().getRealPath("/upload");
+        //如果路径不存在,创建一个
+        File realPath = new File(path);
+        if (!realPath.exists()){
+            realPath.mkdirs();
+        }
+        System.out.println("上传文件保存地址:" + realPath);
+
+        InputStream in = file.getInputStream(); //文件输入流
+        OutputStream os = new FileOutputStream(new File(realPath,uploadFileName));  //文件输出流
+        //读取写出
+        int len = 0;
+        byte[] buffer = new byte[1024];
+        while ((len = in.read(buffer)) != -1){
+            os.write(buffer,0,len);
+            os.flush();
+        }
+        os.close();
+        in.close();
+        return "redirect:/index.jsp";
+    }
+
+
+    //上传文件方式二:transferTo
+    @RequestMapping("/upload2")
+    public String upload2(@RequestParam("file") CommonsMultipartFile file,HttpServletRequest request) throws IOException {
+
+        //上传路径保存设置
+        String path = request.getServletContext().getRealPath("/upload");
+        File realPath = new File(path);
+        if (!realPath.exists()){
+            realPath.mkdirs();
+        }
+
+        //上传文件地址
+        System.out.println("上传文件保存地址:" + realPath);
+
+        //通过CommonsMultipartFile的transferTo方法直接写入文件
+        file.transferTo(new File(realPath + "/" + file.getOriginalFilename()));
+
+        return "redirect:index.jsp";
+    }
+}
+```
