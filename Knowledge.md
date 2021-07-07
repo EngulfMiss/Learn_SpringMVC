@@ -430,3 +430,43 @@ public String json5(){
     return s;
 }
 ```
+
+## 拦截器
+**概述**
+SpringMVC的处理器拦截器类似于Servlet开发中的过滤器Filter，用于对处理器进行预处理和后处理。  
+过滤器和拦截器的区别：
+- 拦截器是AOP思想的具体应用。
+- 拦截器只会拦截访问的控制器方法，如果访问的是jsp/html/css/image/js是不会进行拦截的
+___
+**自定义拦截器**  
+步骤：  
+1. 编写自定义拦截器类 实现 HandlerInterceptor接口实现preHandle，postHandle，afterCompletion方法
+```java
+public class MyInterceptor implements HandlerInterceptor {
+
+    //return true：执行下一个拦截器，放行
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("============处理前============");
+        return true;
+    }
+
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        System.out.println("============处理后============");
+    }
+
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        System.out.println("============清理============");
+    }
+}
+```
+2. 配置拦截器
+```xml
+<!-- 配置拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- /**包括这个请求下面的所有的请求 -->
+            <mvc:mapping path="/**"/>
+            <bean class="com.engulf.interceptor.MyInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+```
