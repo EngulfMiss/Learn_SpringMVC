@@ -515,7 +515,7 @@ public class MyInterceptor implements HandlerInterceptor {
 </html>
 ```
 
-**controller控制文件上传代码**
+**controller控制文件上传代码(两种方式)**
 ```java
 @RestController
 public class TestController {
@@ -576,4 +576,45 @@ public class TestController {
         return "redirect:index.jsp";
     }
 }
+```
+
+## 文件下载
+**controller代码**  
+
+导入的是这一个URLEncoder的包  
+import java.net.URLEncoder;  
+
+```java
+@RequestMapping("/download")
+    public String download(HttpServletResponse response,HttpServletRequest request) throws Exception {
+        //要下载的图片地址
+        String path = request.getServletContext().getRealPath("/upload");
+        //要下载的文件名
+        String fileName = "Kindred.jpg";
+
+        //1.设置response 响应头
+        response.reset();  //设置页面不缓存,清空buffer
+        response.setCharacterEncoding("UTF-8");  //设置字符编码
+        response.setContentType("multipart/form-data");  //设置二进制数据传输
+        //设置响应头
+        response.setHeader("Content-Disposition","attachment;fileName="
+        + URLEncoder.encode(fileName,"UTF-8"));
+
+        File file = new File(path,fileName);
+
+        //2.读取文件--输入流
+        InputStream in = new FileInputStream(file);
+        //3.写出文件--输出流
+        OutputStream os = response.getOutputStream();
+
+        byte[] buff = new byte[1024];
+        int index = 0;
+        while ((index = in.read())!=-1){
+            os.write(buff,0,index);
+            os.flush();
+        }
+        os.close();
+        in.close();
+        return "ok";
+    }
 ```
